@@ -1,7 +1,0 @@
-{
- "mes": "teste",
- "linhas": [
-  {"ID": "TESTE1", "Quando": "2099-01-01 20:00", "Tipo": "CARROSSEL", "Imagens": "https://exemplo/a.jpg,https://exemplo/b.jpg", "Legenda": "Linha 1 da legenda, com vírgulas e «aspas».\n\n#ninguemnasceensinado", "Estado": "Pendente", "Notas": "teste", "Resultado": "", "Pasta": "media/teste/TESTE1"},
-  {"ID": "TESTE2", "Quando": "2099-01-01 20:15", "Tipo": "STORY", "Imagens": "https://exemplo/c.jpg", "Legenda": "", "Estado": "Pendente", "Notas": "Story «novo post» — sai depois do post TESTE1", "Resultado": "", "Pasta": "media/teste/TESTE2"}
- ]
-}
