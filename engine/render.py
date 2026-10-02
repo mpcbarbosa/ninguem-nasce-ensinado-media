@@ -6,6 +6,7 @@ Lê content/<mês>/*.json (ver SCHEMA.md), gera:
   media/<mês>/<ID>/reel.mp4  reels (4 cenas, ~12 s, faixa de áudio silenciosa)
   media/<mês>/N<nn>/story.jpg  story «novo post» para cada post P<nn>
   media/<mês>/calendario.csv  linhas prontas para a folha do Make
+  media/<mês>/calendario.json  as mesmas linhas, lidas pelo cenário de importação do Make
   media/<mês>/preview.html     pré-visualização do mês
 
 Uso: python engine/render.py 2026-11 [--base-url URL]
@@ -255,8 +256,8 @@ def main():
                      block({"t": "hand", "text": "Novo no feed — vai espreitar!", "size": 58}, T))
             doc = page(Tk, 1080, 1920, "Novo post no feed", 1, 1, inner, "tall")
             png = os.path.join(sd, "01.png"); R.shot(doc, 1080, 1920, png, f"{sid} story"); j = png[:-4] + ".jpg"; to_jpg(png, j)
-            hh, mm = it["quando"][-5:].split(":")
-            q = it["quando"][:-5] + f"{hh}:{int(mm)+15:02d}"
+            from datetime import datetime, timedelta
+            q = (datetime.strptime(it["quando"], "%Y-%m-%d %H:%M") + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M")
             rows.append(dict(ID=sid, Quando=q, Tipo="STORY", Imagens=url(os.path.relpath(j, ROOT)), Legenda="",
                              Estado="Aprovado", Notas=f"Story «novo post» — sai depois do post {iid}", Resultado="", Pasta=f"media/{a.mes}/{sid}"))
             prev.append(({"id": sid, "tipo": "STORY", "quando": q, "titulo": "Novo post: " + it.get("titulo", ""), "legenda": ""}, [j]))
@@ -265,6 +266,8 @@ def main():
     with open(os.path.join(dst, "calendario.csv"), "w", newline="") as f:
         wr = csv.DictWriter(f, fieldnames=["ID", "Quando", "Tipo", "Imagens", "Legenda", "Estado", "Notas", "Resultado", "Pasta"])
         wr.writeheader(); wr.writerows(rows)
+    with open(os.path.join(dst, "calendario.json"), "w", encoding="utf-8") as f:
+        json.dump({"mes": a.mes, "linhas": rows}, f, ensure_ascii=False, indent=1)
     write_preview(dst, prev, a.mes)
     open(os.path.join(dst, "avisos.txt"), "w").write("\n".join(R.warn) + "\n")
     print(f"{len(items)} peças, {len(rows)} linhas de calendário; avisos: {len(R.warn)}")
